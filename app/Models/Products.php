@@ -19,7 +19,7 @@ class Products extends Model
         return $this->belongsTo(Companies::class, 'companies_idcompany', 'idcompany');
     }
 
-    // SCOPES - filters and sort & include
+    // SCOPES - filters and sort & include  para filtros dinamicos en la consulta.
     public function scopeFilter($query, array $filters) {
         $query->when($filters['name'] ?? null, fn($q,$v) => $q->where('name','like',"%{$v}%"));
         $query->when($filters['category_id'] ?? null, fn($q,$v) => $q->where('categories_idcategory',$v));
@@ -30,7 +30,7 @@ class Products extends Model
         return $query;
     }
 
-    // sort: accepts "-field" for desc
+    // sort: sirve para ordenar los resultados por una columna especifica
     public function scopeSort($query, $sort) {
         if (!$sort) return $query;
         $direction = str_starts_with($sort,'-') ? 'desc' : 'asc';
@@ -42,7 +42,7 @@ class Products extends Model
         return $query;
     }
 
-    // include relationships by comma list, e.g. include=category,company
+    // include incluir relaciones de category y company en la consulta
     public function scopeInclude($query, $include) {
         if (!$include) return $query;
         $rels = array_map('trim', explode(',', $include));
